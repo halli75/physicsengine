@@ -1,29 +1,65 @@
 var bodies = [];
 
 class Body {
-  constructor(x,y,z,col){
+  constructor(x,y,z,surface){
     this.pos = createVector(x,y,z);
     this.vel = createVector(0,0,0);
-    this.col = col;
+    this.vertices = [];
+    this.tVertices = [];
     this.faces = [];
-    this.tFaces = [];
+
+    this.colored = false;
+    
+    if(surface instanceof p5.Color){
+      this.colored = true;
+      this.color = surface;
+    }
+    else{
+      this.textures = surface;
+      this.facesUV = [];
+    }
+
     bodies.push(this);
   }
 
   show() {
-    buff.fill(this.col);
-    for(let face of this.tFaces){
-      buff.beginShape();
-      for(let v of face){
-        buff.vertex(v[0],v[1],v[2]);
+    if(this.colored) {
+      buff.fill(this.color);
+
+      for(let face of this.faces) {
+        buff.beginShape();
+
+        for(let i of face) {
+          let v = this.tVertices[i];
+          buff.vertex(v.x,v.y,v.z);
+        }
+        buff.endShape(CLOSE);
       }
-      buff.endShape();
+    }
+    else{
+      
+      let faceIx = 0;
+      for(let face of this.faces) {
+
+        buff.texture(this.textures[faceIx]);
+        buff.beginShape();
+
+        let faceUV = this.facesUV[faceIx];
+
+        let i = 0;
+        for(let vertIx of face) {
+          let v = this.tVertices[vertIx];
+          buff.vertex(v.x,v.y,v.z, faceUV[i][0], faceUV[i][1]);
+          i++;
+        }
+        buff.endShape(CLOSE);
+
+        faceIx++;
+      }
     }
   }
 
   update() {
-    this.tFaces = JSON.parse(JSON.stringify(this.faces));
-
     let relVel = p5.Vector.sub(this.vel, camVel);
     relVel.add( p5.Vector.cross( camVel, p5.Vector.cross(camVel, this.vel)).mult(g/(1+g)) );
     relVel.mult( 1/(1-camVel.dot(this.vel)) );
@@ -44,109 +80,102 @@ class Body {
     let x = [t , pos.x, pos.y, pos.z];
 
     let v = multiplyMatrixAndPoint(boost, x);
-    //print(v[0]);
 
     let relPos = createVector(v[1],v[2],v[3]);
 
-    //print(relPos.copy().sub(debugPos).mag());
-    //debugPos = relPos.copy();
-
-    for(let i = 0; i < this.tFaces.length; i++){
-      let face = this.tFaces[i];
-
-      for(let j = 0; j < face.length; j++){
-        let v = face[j];
-
-        let locPos = createVector(v[0],v[1],v[2]);
-        locPos.sub( n.copy().mult( (1 - k) * locPos.dot(n)));
-
-        v[0] = locPos.x + relPos.x;
-        v[1] = locPos.y + relPos.y;
-        v[2] = locPos.z + relPos.z;        
-      }
+    for(let i = 0; i < this.vertices.length; i++) {
+      let locPos = this.vertices[i].copy();
+      locPos.sub( n.copy().mult( (1 - k) * locPos.dot(n)));
+      this.tVertices[i] = locPos.add( relPos); 
     }
   }
 }
 
 class Cube extends Body{
-  constructor(x,y,z,sx,sy,sz,col){
-    super(x,y,z,col);
+  constructor(x,y,z,sx,sy,sz,sur){
+    if(Array.isArray(sur) || sur instanceof p5.Color)
+      super(x,y,z,sur);
+    else
+      super(x,y,z,[sur,sur,sur,sur,sur,sur]);
 
-    var zP = [ 
-      [-0.5,-0.5,0.5],
-      [-0.5,0.5,0.5],
-      [0.5,0.5,0.5],
-      [0.5,-0.5,0.5]
-    ];
+    this.vertices.push(createVector(-0.5,0.5,-0.5));
+    this.vertices.push(createVector(-0.5,0.5,0.5));
+    this.vertices.push(createVector(0.5,0.5,0.5));
+    this.vertices.push(createVector(0.5,0.5,-0.5));
+
+    this.vertices.push(createVector(-0.5,-0.5,-0.5));
+    this.vertices.push(createVector(-0.5,-0.5,0.5));
+    this.vertices.push(createVector(0.5,-0.5,0.5));
+    this.vertices.push(createVector(0.5,-0.5,-0.5));
+
+    var zP = [2,6,5,1];
     this.faces.push(zP);
 
-    var zN = [ 
-      [-0.5,-0.5,-0.5],
-      [-0.5,0.5,-0.5],
-      [0.5,0.5,-0.5],
-      [0.5,-0.5,-0.5]
-    ];
+    var zN = [0,4,7,3];
     this.faces.push(zN);
  
-    var xP = [ 
-      [0.5,-0.5,-0.5],
-      [0.5,-0.5,0.5],
-      [0.5,0.5,0.5],
-      [0.5,0.5,-0.5]
-    ];
+    var xP = [3,7,6,2];
     this.faces.push(xP);
 
-    var xN = [ 
-      [-0.5,-0.5,0.5],
-      [-0.5,0.5,0.5],
-      [-0.5,0.5,-0.5],
-      [-0.5,-0.5,-0.5]
-    ];
+    var xN = [1,5,4,0];
     this.faces.push(xN);
 
-    var yP = [ 
-      [-0.5,0.5,0.5],
-      [0.5,0.5,0.5],
-      [0.5,0.5,-0.5],
-      [-0.5,0.5,-0.5]
-    ];
+    var yP = [0,1,2,3];
     this.faces.push(yP);
 
-    var yN = [ 
-      [-0.5,-0.5,0.5],
-      [0.5,-0.5,0.5],
-      [0.5,-0.5,-0.5],
-      [-0.5,-0.5,-0.5]
-    ];
+    var yN = [4,5,6,7];
     this.faces.push(yN);
 
-    for(let face of this.faces){
-      for(let v of face){
-        v[0] *= sx;
-        v[1] *= sy;
-        v[2] *= sz;
+    for(let v of this.vertices){
+      v.x *= sx;
+      v.y *= sy;
+      v.z *= sz;
+    }
+
+    if(!this.colored){
+      const texFace = [
+        [0,0],
+        [1,0],
+        [1,1],
+        [0,1]
+      ];
+
+      for(let i = 0; i < 6; i++) {
+        this.facesUV.push( JSON.parse(JSON.stringify(texFace)) );
       }
     }
+
   }
 }
 
 class Plane extends Body{
-  constructor(x,y,z,r,col){
-    super(x,y,z,col);
-    var plane = [ 
-      [-0.5,0,0.5],
-      [-0.5,0,-0.5],
-      [0.5,0,-0.5],
-      [0.5,0,0.5]
-    ];
-    this.faces.push(plane);
+  constructor(x,y,z,sx,sz,sur){
+    if(Array.isArray(sur) || sur instanceof p5.Color)
+      super(x,y,z,sur);
+    else
+      super(x,y,z,[sur]);
 
-    for(let face of this.faces){
-      for(let v of face){
-        v[0] *= r;
-        v[1] *= r;
-        v[2] *= r;
-      }
+    this.vertices.push(createVector(-0.5,0,-0.5));
+    this.vertices.push(createVector(-0.5,0,0.5));
+    this.vertices.push(createVector(0.5,0,0.5));
+    this.vertices.push(createVector(0.5,0,-0.5));
+
+    this.faces.push([0,1,2,3]);
+
+    for(let v of this.vertices){
+      v.x *= sx;
+      v.z *= sz;
     }
+
+    if(!this.colored){
+      const texFace = [
+        [0,0],
+        [1,0],
+        [1,1],
+        [0,1]
+      ];
+      this.facesUV.push( texFace);
+    }
+
   }
 }

@@ -43,6 +43,16 @@ var b;
 var n;
 var boost;
 
+var check16Tex;
+var check32Tex;
+var check64Tex;
+
+function preload() {
+  check16Tex = loadImage('assets/check16.png');
+  check32Tex = loadImage('assets/check32.png');
+  check64Tex = loadImage('assets/check64.png');
+}
+
 function setup() {
   WIDTH = windowWidth - 20;
   HEIGHT = windowHeight - 20;
@@ -54,6 +64,7 @@ function setup() {
     pitch += e.movementY * mouseSensitivity;
   });
   buff = createGraphics(WIDTH, HEIGHT, WEBGL);
+  buff.textureMode(NORMAL);
   //setAttributes('antialias', true);
 
   camPos = createVector(-5,0,0);
@@ -68,14 +79,13 @@ function setup() {
   
   buff.stroke(100);
   buff.strokeWeight(0.03);
-  //buff.noStroke();
 
   stroke(0);
   strokeWeight(3);
   
   //defaultScenario();
-  //lightScenario();
-  simultaneityScenario();
+  //simultaneityScenario();
+  gateScenario();
 
   debugPos = createVector(0,0,0);  
 
@@ -184,9 +194,10 @@ function draw() {
     b.update();
     b.show(buff);
   }
+  buff.fill(255);
   
   image(buff,0,0);  
-
+  
 
   fill(255);
   text("Position: " +camPos.x.toFixed(2) + "  " +camPos.y.toFixed(2)+"  "+camPos.z.toFixed(2) , 10, 10);
@@ -204,29 +215,33 @@ function mousePressed() {
 }
 
 function keyPressed() {
-  if (keyCode == 67){
+  if (keyCode == 67){ //C
     if(constantSpeed) constantSpeed = false;
     else constantSpeed = true;
   }
-  if (keyCode == 81){
+  if (keyCode == 81){ //Q
     if(constantRotation) constantRotation = false;
     else constantRotation = true;
   }
-  if(keyCode == 82){
+  if(keyCode == 82){ //R
     reset = true;
   }
-  if(keyCode == 32){
+  if(keyCode == 32){ //SPACE
     stop = true;
   }
-  if(keyCode == 76){
+  if(keyCode == 76){ //L
     direction = camVel.copy().normalize();
-    pitch = degrees(asin(direction.y));
+    pitch = asin(direction.y);
     let flat = createVector(direction.x, direction.z);
-    yaw = degrees(flat.heading());  
+    yaw = flat.heading();  
   }
-  if(keyCode == 69){
+  if(keyCode == 69){ //E
     let light = new Cube(camPos.x,camPos.y,camPos.z,0.1,0.1,0.1,color(255,255,0));
-    light.vel = direction.copy();
+    light.vel = camVel.copy();
+    light.vel.add( direction.copy().div(g) );
+    light.vel.add( camVel.copy().mult( direction.dot(camVel) * g/(1+g)) );
+    light.vel.div(1+direction.dot(camVel));
+
     light.pos.sub( light.vel.copy().mult(etherTime));
   }
   if(keyCode == 37)

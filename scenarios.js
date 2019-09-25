@@ -1,13 +1,22 @@
-function lightScenario(){
-  let p1 = new Cube(0,0,0, 0.5,0.5,0.5,color(255));
-  p1.vel.x = 1;
+function gateScenario(){
+  camPos = createVector(0,-1,-20);
+  yaw = HALF_PI;
 
-  let p2 = new Cube(0,0,0, 0.5,0.5,0.5,color(255));
-  p2.vel.x = -1;
-  
-  let p3 = new Cube(0,0,0, 0.5,0.5,0.5,color(255));
-  p3.vel.y = sqrt(2)/2;
-  p3.vel.z = sqrt(2)/2;
+  new Plane(0.5,0,0.5,64,64,check64Tex);
+  new Cube(-2,-3,0, 1,6,3,color(234,213,158));
+  new Cube(2,-3,0, 1,6,3,color(234,213,158));
+
+  new Cube(-5,-3,0, 1,6,3,color(234,213,158));
+  new Cube(5,-3,0, 1,6,3,color(234,213,158));
+
+  new Cube(-8,-3,0, 1,6,3,color(234,213,158));
+  new Cube(8,-3,0, 1,6,3,color(234,213,158));
+
+  new Cube(0,-6.5,0, 17,1,3,color(234,213,158));
+  new Cube(0,-7,0, 18,0.5,4,color(234,213,158));
+  new Cube(0,-8,0, 17,1.5,2,color(234,213,158));
+  new Cube(0,-8.1,0, 5,1.7,4,color(234,213,158));
+  new Cube(0,-10,0, 3,2,2,color(103,150,138));
 }
 
 function defaultScenario(){
@@ -42,12 +51,4 @@ function simultaneityScenario(){
   line.vel.z = 1;
 
   camPos = createVector(0,-5,0);
-  /*
-  let la = new Cube(-5,0,-10,1,1,1,color(255));
-  la.vel.z = 1;
-  let lb = new Cube(0,0,-10,1,1,1,color(255));
-  lb.vel.z = 1;
-  let lc = new Cube(5,0,-10,1,1,1,color(255));
-  lc.vel.z = 1;
-  */
 }
