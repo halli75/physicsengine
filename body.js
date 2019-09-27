@@ -59,17 +59,27 @@ class Body {
     }
   }
 
-  update() {
+  applyGalilean() {
+    let relPos = this.pos.copy().add( this.vel.copy().mult(etherTime)).sub(camPos);
+    for(let i = 0; i < this.vertices.length; i++) {
+      let locPos = this.vertices[i].copy();
+      locPos.add( relPos);
+        
+      this.tVertices[i] = locPos;
+    }
+  }
+
+  applyLorentz() {
     let relVel = p5.Vector.sub(this.vel, camVel);
     relVel.add( p5.Vector.cross( camVel, p5.Vector.cross(camVel, this.vel)).mult(g/(1+g)) );
     relVel.mult( 1/(1-camVel.dot(this.vel)) );
 
     var k;
-    if(relVel.magSq()>0.999)
+    if(relVel.magSq()>0.99)
       k = 0;
     else 
       k = sqrt(1-relVel.magSq());
-    var n = relVel.normalize();
+    var n = relVel.copy().normalize();
 
     /////////////////////////////////////////////////////////////
 
@@ -86,7 +96,67 @@ class Body {
     for(let i = 0; i < this.vertices.length; i++) {
       let locPos = this.vertices[i].copy();
       locPos.sub( n.copy().mult( (1 - k) * locPos.dot(n)));
-      this.tVertices[i] = locPos.add( relPos); 
+      locPos.add( relPos);
+        
+      this.tVertices[i] = locPos;
+    }
+  }
+  
+  applyLorentzAndTerrell() {
+    let relVel = p5.Vector.sub(this.vel, camVel);
+    relVel.add( p5.Vector.cross( camVel, p5.Vector.cross(camVel, this.vel)).mult(g/(1+g)) );
+    relVel.mult( 1/(1-camVel.dot(this.vel)) );
+
+    var k;
+    if(relVel.magSq()>0.99)
+      k = 0;
+    else 
+      k = sqrt(1-relVel.magSq());
+    var n = relVel.copy().normalize();
+
+    /////////////////////////////////////////////////////////////
+
+    let t = (etherTime + camVel.dot(this.pos) - camVel.dot(camPos)) / (1 - camVel.dot(this.vel));
+    let pos = this.pos.copy().add( this.vel.copy().mult(t) );
+    pos.sub(camPos);
+    t -= etherTime;
+    let x = [t , pos.x, pos.y, pos.z];
+
+    let v = multiplyMatrixAndPoint(boost, x);
+
+    let relPos = createVector(v[1],v[2],v[3]);
+
+    if(relVel.magSq() < 0.999999) {
+      for(let i = 0; i < this.vertices.length; i++) {
+        let locPos = this.vertices[i].copy();
+        locPos.sub( n.copy().mult( (1 - k) * locPos.dot(n)));
+        locPos.add( relPos);
+        
+        let td = -sqrt(4*locPos.dot(relVel)*locPos.dot(relVel)-4*locPos.magSq()*(relVel.magSq()-1) ) +2*locPos.dot(relVel);
+        td /= 2*(relVel.magSq()-1);
+        locPos.sub(relVel.copy().mult(td));
+        
+        this.tVertices[i] = locPos;
+      }
+    }
+    else{
+      if(relPos.dot(relVel) > 0){
+        for(let i = 0; i < this.vertices.length; i++) {
+          let locPos = this.vertices[i].copy();
+          locPos.sub( n.copy().mult( (1 - k) * locPos.dot(n)));
+          locPos.add( relPos);
+          
+          let td = locPos.magSq()/2/locPos.dot(relVel);
+          locPos.sub(relVel.copy().mult(td));
+          
+          this.tVertices[i] = locPos;
+        }
+      }
+      else{
+        for(let i = 0; i < this.vertices.length; i++) {
+          this.tVertices[i] = createVector(0,0,0);
+        }
+      }
     }
   }
 }

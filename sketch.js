@@ -47,10 +47,24 @@ var check16Tex;
 var check32Tex;
 var check64Tex;
 
+var dice1Tex;
+var dice2Tex;
+var dice3Tex;
+var dice4Tex;
+var dice5Tex;
+var dice6Tex;
+
 function preload() {
   check16Tex = loadImage('assets/check16.png');
   check32Tex = loadImage('assets/check32.png');
   check64Tex = loadImage('assets/check64.png');
+
+  dice1Tex = loadImage('assets/d1.png');
+  dice2Tex = loadImage('assets/d2.png');
+  dice3Tex = loadImage('assets/d3.png');
+  dice4Tex = loadImage('assets/d4.png');
+  dice5Tex = loadImage('assets/d5.png');
+  dice6Tex = loadImage('assets/d6.png');
 }
 
 function setup() {
@@ -85,7 +99,8 @@ function setup() {
   
   //defaultScenario();
   //simultaneityScenario();
-  gateScenario();
+  //gateScenario();
+  terrellScenario();
 
   debugPos = createVector(0,0,0);  
 
@@ -187,17 +202,16 @@ function draw() {
   buff.camera(0,0,0, direction.x, direction.y, direction.z, 0, 1, 0);
 
   buff.background(0);
-  
-  buff.fill(255);
 
   for(let b of bodies){
-    b.update();
+    //b.applyGalilean();
+    //b.applyLorentz();
+    b.applyLorentzAndTerrell();
     b.show(buff);
   }
   buff.fill(255);
   
   image(buff,0,0);  
-  
 
   fill(255);
   text("Position: " +camPos.x.toFixed(2) + "  " +camPos.y.toFixed(2)+"  "+camPos.z.toFixed(2) , 10, 10);

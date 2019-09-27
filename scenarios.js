@@ -19,6 +19,20 @@ function gateScenario(){
   new Cube(0,-10,0, 3,2,2,color(103,150,138));
 }
 
+function terrellScenario(){
+  camPos = createVector(-20,0,-4);
+  yaw = radians(40);
+  
+  for(let x = -18; x < 0; x += 3){
+    new Cube(x,1,0,1,1,1,[dice6Tex,dice1Tex,dice4Tex,dice3Tex,dice2Tex,dice5Tex,]);
+  }
+
+  for(let x = -18; x < 0; x += 3){
+    let c = new Cube(x,-1,0,1,1,1,[dice6Tex,dice1Tex,dice4Tex,dice3Tex,dice2Tex,dice5Tex,]);
+    c.vel.x = -0.9;
+  }
+}
+
 function defaultScenario(){
   let mc = new Cube(0,1,0, 1,1,1,color(255));
 
@@ -45,7 +59,6 @@ function simultaneityScenario(){
   let a = new Cube(-5,0,0,1,1,1,color(255,0,0));
   let b = new Cube(0,0,0,1,1,1,color(0,255,0));
   let c = new Cube(5,0,0,1,1,1,color(0,0,255));
-  
 
   let line = new Cube(0,0,-10,100,0.1,0.1,color(255));
   line.vel.z = 1;
