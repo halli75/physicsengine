@@ -1,22 +1,22 @@
-function gateScenario(){
+function gateScenario(d=1){
   camPos = createVector(0,-1,-20);
   yaw = HALF_PI;
 
-  new Plane(0.5,0,0.5,64,64,check64Tex);
-  new Cube(-2,-3,0, 1,6,3,color(234,213,158));
-  new Cube(2,-3,0, 1,6,3,color(234,213,158));
+  new Plane(0.5,0,0.5,64,64,check64Tex,16,16);
+  new Cube(-2,-3,0, 1,6,3,color(234,213,158),1,3,1);
+  new Cube(2,-3,0, 1,6,3,color(234,213,158),1,3,1);
 
-  new Cube(-5,-3,0, 1,6,3,color(234,213,158));
-  new Cube(5,-3,0, 1,6,3,color(234,213,158));
+  new Cube(-5,-3,0, 1,6,3,color(234,213,158),1,3,1);
+  new Cube(5,-3,0, 1,6,3,color(234,213,158),1,3,1);
 
-  new Cube(-8,-3,0, 1,6,3,color(234,213,158));
-  new Cube(8,-3,0, 1,6,3,color(234,213,158));
+  new Cube(-8,-3,0, 1,6,3,color(234,213,158),1,3,1);
+  new Cube(8,-3,0, 1,6,3,color(234,213,158),1,3,1);
 
-  new Cube(0,-6.5,0, 17,1,3,color(234,213,158));
-  new Cube(0,-7,0, 18,0.5,4,color(234,213,158));
-  new Cube(0,-8,0, 17,1.5,2,color(234,213,158));
-  new Cube(0,-8.1,0, 5,1.7,4,color(234,213,158));
-  new Cube(0,-10,0, 3,2,2,color(103,150,138));
+  new Cube(0,-6.5,0, 17,1,3,color(234,213,158),8,1,1);
+  new Cube(0,-7,0, 18,0.5,4,color(234,213,158),9,1,1);
+  new Cube(0,-8,0, 17,1.5,2,color(234,213,158),8,1,1);
+  new Cube(0,-8.1,0, 5,1.7,4,color(234,213,158),3,1,1);
+  new Cube(0,-10,0, 3,2,2,color(103,150,138),3,2,1);
 }
 
 function terrellScenario(){
@@ -24,11 +24,11 @@ function terrellScenario(){
   yaw = radians(40);
   
   for(let x = -18; x < 0; x += 3){
-    new Cube(x,1,0,1,1,1,[dice6Tex,dice1Tex,dice4Tex,dice3Tex,dice2Tex,dice5Tex,]);
+    new Cube(x,1,0,1,1,1,[dice1Tex,dice6Tex,dice5Tex,dice2Tex,dice3Tex,dice4Tex]);
   }
 
   for(let x = -18; x < 0; x += 3){
-    let c = new Cube(x,-1,0,1,1,1,[dice6Tex,dice1Tex,dice4Tex,dice3Tex,dice2Tex,dice5Tex,]);
+    let c = new Cube(x,-1,0,1,1,1,[dice1Tex,dice6Tex,dice5Tex,dice2Tex,dice3Tex,dice4Tex],4,4);
     c.vel.x = -0.9;
   }
 }
