@@ -1,14 +1,109 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="body.js"></script>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
-    <script language="javascript" type="text/javascript" src="sketch.js"></script>
-    <script src="scenarios.js"></script>
-    <script src="matrix.js"></script>  
+    <meta charset="utf8">
+    <title>twgl.js - webgl cube</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+      
+    <script src="https://twgljs.org/dist/4.x/twgl-full.min.js"></script>
 
-    <meta charset="utf-8" />
+    <script src="body.js"></script>
+
+    <script src="matrix.js"></script>
+    <script src="scenarios.js"></script>
+
   </head>
   <body>
+    <div class="container">
+			<canvas id="c"></canvas>
+      <canvas id="text"></canvas>
+			<div id="menuContainer"></div>
+			<div id="subtitleContainer"></div>
+    </div>
   </body>
+  
+  <script id="vs" type="notjs">
+    //v_position = a_position + vec4(u_pos,0) + vec4(u_vel,0)*u_time - vec4(u_camPos,0); 
+
+uniform mat4 u_worldViewProjection;
+uniform mat4 u_world;
+
+uniform vec3 n;
+uniform float k;
+uniform vec3 relPos;
+uniform vec3 relVel;
+
+uniform int simulationType;
+
+varying float td;
+
+attribute vec4 a_position;
+attribute vec3 a_normal;
+attribute vec2 a_texcoord;
+
+varying vec3 v_position;
+varying vec2 v_texCoord;
+
+varying float intensity;
+
+float lengthSq( vec3 x) {
+  return dot(x,x);
+}
+
+float angleBetween(vec3 a, vec3 b){
+    float d = dot(normalize(a),normalize(b));
+    if(d > 1.0)
+      d = 1.0;
+    if(d < -1.0)
+      d = -1.0;
+    return acos(d);
+}
+
+void main() {
+	v_position = a_position.xyz;
+
+	if(simulationType != 0)
+  	v_position -= n * (1.0-k) * dot(a_position.xyz, n);
+  v_position += relPos;
+
+	
+  if(lengthSq(relVel) < 0.99999) {
+    td = -sqrt(4.0*dot(v_position, relVel)*dot(v_position,relVel) - 4.0*lengthSq( v_position)*( lengthSq(relVel)-1.0)) + 2.0*dot(v_position, relVel);
+    td /= 2.0 * (lengthSq(relVel)-1.0);
+  }
+  else {
+    if(dot(relPos,relVel) > 0.0)
+      td = lengthSq(v_position)/2.0/dot(v_position, relVel);
+    else {
+      v_position = vec3(0,0,0);
+      td = 0.0;
+    } 
+  }
+	
+	if(simulationType == 2)
+  	v_position -= relVel * td;
+
+	intensity = 1.0/(1.0 - length(relVel) * cos( angleBetween( relVel, v_position) ) );
+
+  v_texCoord = a_texcoord;
+  
+  gl_Position = u_worldViewProjection * vec4(v_position,a_position.w);
+}
+  </script>
+  <script id="fs" type="notjs">
+precision mediump float;
+
+varying vec2 v_texCoord;
+
+uniform sampler2D u_diffuse;
+
+void main() {
+  gl_FragColor = texture2D(u_diffuse, v_texCoord);
+}
+</script>
+
+<script type='text/javascript' src='loader.js'></script>
+<script  src="init.js"></script>
+<script  src="main.js"></script>
+
 </html>
