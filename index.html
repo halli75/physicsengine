@@ -2,10 +2,22 @@
 <html>
   <head>
     <meta charset="utf8">
-    <title>twgl.js - webgl cube</title>
+    <title>Special relativity simulation</title>
     <link rel="stylesheet" type="text/css" href="style.css">
       
     <script src="https://twgljs.org/dist/4.x/twgl-full.min.js"></script>
+    
+    
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+      });
+    </script>
+    <!-- https://www.tuhh.de/MathJax/MathJax.js?config=TeX-AMS_HTML-full -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+    
 
     <script src="body.js"></script>
 
@@ -18,8 +30,9 @@
 			<canvas id="c"></canvas>
       <canvas id="text"></canvas>
 			<div id="menuContainer"></div>
-			<div id="subtitleContainer"></div>
     </div>
+    <div id="subtitle1" class="subtitle"></div>
+    <!--><div id="subtitle2" class="subtitle"></div><-->
   </body>
   
   <script id="vs" type="notjs">
@@ -27,6 +40,8 @@
 
 uniform mat4 u_worldViewProjection;
 uniform mat4 u_world;
+
+uniform mat4 rotation;
 
 uniform vec3 n;
 uniform float k;
@@ -60,10 +75,10 @@ float angleBetween(vec3 a, vec3 b){
 }
 
 void main() {
-	v_position = a_position.xyz;
+	v_position = (rotation * a_position).xyz;
 
 	if(simulationType != 0)
-  	v_position -= n * (1.0-k) * dot(a_position.xyz, n);
+  	v_position -= n * (1.0-k) * dot(v_position, n);
   v_position += relPos;
 
 	

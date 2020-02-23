@@ -38,19 +38,22 @@ button{
 	user-select: none;
 }
 
-#subtitleContainer {
+.subtitle {
 	bottom:0;
-	text-align:center;
-	width:100%;
+	width: calc(100% - 20px);
 	position: absolute;
+	padding: 10px;
+	margin:14px 0;
+
+	text-align: justify;
+	background-color: rgba(0, 0, 0, 0.5);
+  	color:white;
+  	font-size:32px;
+	user-select: none;
 }
 
-#subtitle {
-	margin:14px 0;
-	background-color: rgba(0, 0, 0, 0.5);
-  color:white;
-  font-size:32px;
-	user-select: none;
+.subtitle:empty {
+	display: none;
 }
 
 

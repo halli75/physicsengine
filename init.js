@@ -1,44 +1,71 @@
 const container = document.getElementById("menuContainer");
 
-let title = document.createElement("P");
-title.innerHTML = "Relativity simulation";    
+const title = document.createElement("P");
+title.innerHTML = "Special relativity simulation";    
 title.id = "title";
 container.appendChild(title);  
 
-var lengthContractionBtn = document.createElement("BUTTON"); 
-lengthContractionBtn.innerHTML = "Length contraction";
-lengthContractionBtn.onclick = function(){
-	inScenario = true;
-	scenario = new LengthContractionScenario();
-	etherTime = 0;
-	hideMenu();
-	requestAnimationFrame(render);
-};                 
-container.appendChild(lengthContractionBtn);
-
-var simultaneityBtn = document.createElement("BUTTON"); 
+const simultaneityBtn = document.createElement("BUTTON"); 
 simultaneityBtn.innerHTML = "Simultaneity";
 simultaneityBtn.onclick = function(){
 	inScenario = true;
 	scenario = new SimultaneityScenario();
-	etherTime = 0;
 	hideMenu();
 	requestAnimationFrame(render);
 };                 
 container.appendChild(simultaneityBtn);
 
-var terrellRotationBtn = document.createElement("BUTTON"); 
+const timeDilatationBtn = document.createElement("BUTTON"); 
+timeDilatationBtn.innerHTML = "Time dilatation";
+timeDilatationBtn.onclick = function(){
+	inScenario = true;
+	scenario = new TimeDilatationScenario();
+	hideMenu();
+	requestAnimationFrame(render);
+};                 
+container.appendChild(timeDilatationBtn);
+
+const lengthContractionBtn = document.createElement("BUTTON"); 
+lengthContractionBtn.innerHTML = "Length contraction";
+lengthContractionBtn.onclick = function(){
+	inScenario = true;
+	scenario = new LengthContractionScenario();
+	hideMenu();
+	requestAnimationFrame(render);
+};                 
+container.appendChild(lengthContractionBtn);
+
+const terrellRotationBtn = document.createElement("BUTTON"); 
 terrellRotationBtn.innerHTML = "Terrell rotation";
 terrellRotationBtn.onclick = function(){
 	inScenario = true;
 	scenario = new TerrellRotationScenario();
-	etherTime = 0;
 	hideMenu();
 	requestAnimationFrame(render);
 };              
 container.appendChild(terrellRotationBtn);  
 
-var gateBtn = document.createElement("BUTTON"); 
+const ladderParadoxBtn = document.createElement("BUTTON"); 
+ladderParadoxBtn.innerHTML = "Ladder paradox";
+ladderParadoxBtn.onclick = function(){
+	inScenario = true;
+	scenario = new LadderParadoxScenario();
+	hideMenu();
+	requestAnimationFrame(render);
+};              
+container.appendChild(ladderParadoxBtn);  
+
+const twinParadoxBtn = document.createElement("BUTTON"); 
+twinParadoxBtn.innerHTML = "Twin paradox";
+twinParadoxBtn.onclick = function(){
+	inScenario = true;
+	scenario = new TwinParadoxScenario();
+	hideMenu();
+	requestAnimationFrame(render);
+};              
+container.appendChild(twinParadoxBtn);  
+
+const gateBtn = document.createElement("BUTTON"); 
 gateBtn.innerHTML = "gate";
 gateBtn.onclick = function(){
 	inFreemode = true;
@@ -49,12 +76,12 @@ gateBtn.onclick = function(){
 };              
 container.appendChild(gateBtn);  
 
+const subtitle = document.getElementById("subtitle1");
+let subtitleContent = "";
 
-var subtitle = document.createElement("P");
-subtitle.innerHTML = "";    
-subtitle.id = "subtitle";
-document.getElementById("subtitleContainer").appendChild(subtitle);
-//container.appendChild(subtitle);
+//const subtitle2 = document.getElementById("subtitle2");
+//subtitle2.innerHTML = "ABCDE efef1233";
+
 ///////////////////////////////////////////////////////////////////
 "use strict";
 twgl.setDefaults({
@@ -62,7 +89,8 @@ twgl.setDefaults({
 });
 const m4 = twgl.m4;
 const v3 = twgl.v3;
-//const gl = document.querySelector("#c").getContext("webgl");
+
+const canvas = document.getElementById("c");
 const gl = document.getElementById("c").getContext("webgl");
 
 var textCanvas = document.getElementById("text");
@@ -76,6 +104,8 @@ const u_n = gl.getUniformLocation(program, "n");
 const u_k = gl.getUniformLocation(program, "k");
 const u_relPos = gl.getUniformLocation(program, "relPos");
 const u_relVel = gl.getUniformLocation(program, "relVel");
+
+const u_rotation = gl.getUniformLocation(program, "rotation");
 
 const u_simulationType = gl.getUniformLocation(program, "simulationType");
 
@@ -92,25 +122,47 @@ const texcoordLoc = gl.getAttribLocation(program, "a_texcoord");
 const red = twgl.createTexture(gl, {src: 'assets/c_red.png'}); 
 const green = twgl.createTexture(gl, {src: 'assets/c_green.png'}); 
 const blue = twgl.createTexture(gl, {src: 'assets/c_blue.png'}); 
-const white = twgl.createTexture(gl, {src: 'assets/c_white.png'}); 
+const white = twgl.createTexture(gl, {src: 'assets/c_white.png'});
+const black = twgl.createTexture(gl, {src: 'assets/c_black.png'});  
 const gray = twgl.createTexture(gl, {src: 'assets/c_gray.png'}); 
 const aqua = twgl.createTexture(gl, {src: 'assets/c_aqua.png'}); 
 const yellow = twgl.createTexture(gl, {src: 'assets/c_yellow.png'}); 
 const purple = twgl.createTexture(gl, {src: 'assets/c_purple.png'}); 
 const sand = twgl.createTexture(gl, {src: 'assets/c_sand.png'}); 
 const cinder = twgl.createTexture(gl, {src: 'assets/c_cinder.png'}); 
+const sky = twgl.createTexture(gl, {src: 'assets/c_sky.png'}); 
 
-const diceWhiteTex = twgl.createTexture(gl, {src: 'assets/diceWhite.jpg'}); 
+const diceWhiteTex = twgl.createTexture(gl, {src: 'assets/diceWhite.jpg'});
 const diceBlueTex = twgl.createTexture(gl, {src: 'assets/diceBlue.png'});
 const check16Tex = twgl.createTexture(gl, {src: 'assets/check16.png'});
 const check32Tex = twgl.createTexture(gl, {src: 'assets/check32.png'});  
 const check64Tex = twgl.createTexture(gl, {src: 'assets/check64.png'});
 
+const roofTex = twgl.createTexture(gl, {src: 'assets/roof.png'}); 
+const planksTex = twgl.createTexture(gl, {src: 'assets/planks.jpg'}); 
+const earthTex = twgl.createTexture(gl, {src: 'assets/earth.png'}); 
+const ladderTex = twgl.createTexture(gl, {src: 'assets/ladder.jpg'}); 
+const barnTex = twgl.createTexture(gl, {src: 'assets/barn.jpg'}); 
+const brickTex = twgl.createTexture(gl, {src: 'assets/brick.jpg'}); 
+const clockTex = twgl.createTexture(gl, {src: 'assets/clock.jpg', flipY:1}); 
 const testTex = twgl.createTexture(gl, {src: 'assets/test.jpg'}); 
-const trainTex = twgl.createTexture(gl, {src: 'assets/electrictrain.png', flipY:1}); 
+const railTex = twgl.createTexture(gl, {src: 'assets/rail2048.png'});
+const trainFrontTex = twgl.createTexture(gl, {src: 'assets/trainfront.png'}); 
+const trainSideTex = twgl.createTexture(gl, {src: 'assets/trainside.png'}); 
+const trainRoofTex = twgl.createTexture(gl, {src: 'assets/trainroof.png'}); 
+const trainTex = twgl.createTexture(gl, {src: 'assets/electrictrain.png', flipY:1});
 const houseTex = twgl.createTexture(gl, {src: 'assets/smallhouse.jpg', flipY:1}); 
 const housemedievalTex = twgl.createTexture(gl, {src: 'assets/objects/housemedieval.jpg', flipY:1}); 
-const grassTex = twgl.createTexture(gl, {src: 'assets/grass.jpg'}); 
+const grassTex = twgl.createTexture(gl, {src: 'assets/grass.jpg', wrap:gl.REPEAT}); 
+const stationTex = twgl.createTexture(gl, {src: 'assets/railway_station.png', flipY:1}); 
+const rustTex = twgl.createTexture(gl, {src: 'assets/rust.jpg'}); 
+const mirrorTex = twgl.createTexture(gl, {src: 'assets/mirror.png'});
+const concreteTex = twgl.createTexture(gl, {src: 'assets/concrete.jpg'});
+const shinglesTex = twgl.createTexture(gl, {src: 'assets/shingles.jpg'});
+const roofing_metalTex = twgl.createTexture(gl, {src: 'assets/roofing_metal.jpg'});
+const barn_backTex = twgl.createTexture(gl, {src: 'assets/objects/barn/back.png'});
+const rocketTex = twgl.createTexture(gl, {src: 'assets/objects/rocket.jpg', flipY:1});
+const twin_diagramTex = twgl.createTexture(gl, {src: 'assets/twinDiagram.png', flipY:0});
 
 var pitch = 0;
 var yaw = 0;
@@ -160,6 +212,7 @@ window.onkeydown = function(e) {
 }
 
 var camPos = v3.create(3,0,0);
+var camVisPos; //position of 
 var camVel = v3.create(0,0,0);
 var camDir = v3.create(1,0,0);
 var camRight;
@@ -172,7 +225,15 @@ var inFreemode = false;
 
 var simulationType = 0;
 
-var scene;
+const NONE = 0; //simple Galilean transformation
+const PRESENT_HYPERSURFACE = 1; //objects are transformed to hypersurface of present with Lorentz transformation
+const PAST_LIGHTCONE = 2; //lag in signals reaching the observer is considered
+let transformation_method = PRESENT_HYPERSURFACE;
+let sky_color = [0,0,0];
 
-//let s = new Gate();
+const PERSPECTIVE = 0;
+const ORTOGRAPHIC = 1;
+let projectionType = PERSPECTIVE;
+let ortoFrustumSize = 1;
 
+let scene;
