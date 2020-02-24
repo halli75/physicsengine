@@ -304,7 +304,7 @@ class LengthContractionScenario {
 		simulationType = 1;
 		scene = 1;
 
-		etherTime = 0;
+		etherTime = -100;
 
 		sky_color = [0.73,0.835,1];
 

@@ -12,13 +12,25 @@ function render(time) {
 
 		if(subtitleContent.localeCompare(scenario.text(etherTime)) != 0) {
 			subtitleContent = scenario.text(etherTime);
-			subtitle.innerHTML = subtitleContent;
-			MathJax.Hub.Queue(["Typeset",MathJax.Hub,subtitle]);
-			/*
-			const f = () => {
-				console.log("zmiana");
+
+			if(currentSubtitleBar == 1){
+				subtitleBar2.innerHTML = subtitleContent;
+				const f = () => {
+					currentSubtitleBar = 2;
+					subtitleBar1.style.opacity = "0";
+					subtitleBar2.style.opacity = "1";
+				}
+				MathJax.Hub.Queue(["Typeset",MathJax.Hub,subtitleBar2], f);
 			}
-			MathJax.Callback.Queue([f]);*/
+			else {
+				subtitleBar1.innerHTML = subtitleContent;
+				const f = () => {
+					currentSubtitleBar = 1;
+					subtitleBar1.style.opacity = "1";
+					subtitleBar2.style.opacity = "0";
+				}
+				MathJax.Hub.Queue(["Typeset",MathJax.Hub,subtitleBar1], f);
+			}
 		}
 		scenario.event(etherTime);
 	}
@@ -157,7 +169,9 @@ function hideMenu() {
 
 function showMenu() {
 	container.style.display = "inline";
-	subtitle.innerHTML = "";
+	subtitleBar1.innerHTML = "";
+	subtitleBar2.innerHTML = "";
+	subtitleContent = "";
 	scenario.text = (t) => { return "" };
 	inScenario = false;
 	bodies = [];

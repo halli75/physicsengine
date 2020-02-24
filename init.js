@@ -76,11 +76,10 @@ gateBtn.onclick = function(){
 };              
 container.appendChild(gateBtn);  
 
-const subtitle = document.getElementById("subtitle1");
+const subtitleBar1 = document.getElementById("subtitleBar1");
+const subtitleBar2 = document.getElementById("subtitleBar2");
 let subtitleContent = "";
-
-//const subtitle2 = document.getElementById("subtitle2");
-//subtitle2.innerHTML = "ABCDE efef1233";
+let currentSubtitleBar = 1;
 
 ///////////////////////////////////////////////////////////////////
 "use strict";
