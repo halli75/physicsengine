@@ -2,7 +2,7 @@ function render(time) {
 	dt = time - prevTime;
 	dt /= 1000;
 	prevTime = time;
-	if(dt > 0.1) dt = 0;
+	if (dt > 0.1) dt = 0;
 
 	if (inScenario) {
 		camPos = scenario.pos(etherTime);
@@ -10,17 +10,17 @@ function render(time) {
 		camVel = scenario.vel(etherTime);
 		camDir = scenario.dir(etherTime);
 
-		if(subtitleContent.localeCompare(scenario.text(etherTime)) != 0) {
+		if (subtitleContent.localeCompare(scenario.text(etherTime)) != 0) {
 			subtitleContent = scenario.text(etherTime);
 
-			if(currentSubtitleBar == 1){
+			if (currentSubtitleBar == 1) {
 				subtitleBar2.innerHTML = subtitleContent;
 				const f = () => {
 					currentSubtitleBar = 2;
 					subtitleBar1.style.opacity = "0";
 					subtitleBar2.style.opacity = "1";
 				}
-				MathJax.Hub.Queue(["Typeset",MathJax.Hub,subtitleBar2], f);
+				MathJax.Hub.Queue(["Typeset", MathJax.Hub, subtitleBar2], f);
 			}
 			else {
 				subtitleBar1.innerHTML = subtitleContent;
@@ -29,7 +29,7 @@ function render(time) {
 					subtitleBar1.style.opacity = "1";
 					subtitleBar2.style.opacity = "0";
 				}
-				MathJax.Hub.Queue(["Typeset",MathJax.Hub,subtitleBar1], f);
+				MathJax.Hub.Queue(["Typeset", MathJax.Hub, subtitleBar1], f);
 			}
 		}
 		scenario.event(etherTime);
@@ -86,23 +86,20 @@ function render(time) {
 	gl.clearColor(sky_color[0], sky_color[1], sky_color[2], 1);
 
 	let projection;
-	if(projectionType == PERSPECTIVE)
+	if (projectionType == PERSPECTIVE)
 		projection = m4.perspective(90 * Math.PI / 180, gl.canvas.clientWidth / gl.canvas.clientHeight, 0.5, 1000);
 	else {
-		const sc = ortoFrustumSize/canvas.clientHeight;
-		projection = m4.ortho(-canvas.clientWidth*sc,canvas.clientWidth*sc, -canvas.clientHeight*sc, canvas.clientHeight*sc, 0.001, 1000);
+		const sc = ortoFrustumSize / canvas.clientHeight;
+		projection = m4.ortho(-canvas.clientWidth * sc, canvas.clientWidth * sc, -canvas.clientHeight * sc, canvas.clientHeight * sc, 0.001, 1000);
 	}
 
-	//const camera = m4.lookAt(camPos, target, up);
 	const camera = m4.lookAt([0, 0, 0], camDir, up);
 
 	const view = m4.inverse(camera);
 	const viewProjection = m4.multiply(projection, view);
-	//const world = m4.rotationY(time);
 	var world = m4.rotationY(0);
 
 	gl.useProgram(program);
-
 
 	const b = v3.length(camVel);
 	var n;
@@ -114,7 +111,6 @@ function render(time) {
 
 	const det = g * dt;
 	etherTime += det;
-	//console.log(etherTime);
 
 	var ds = v3.mulScalar(camVel, det);
 
@@ -172,9 +168,15 @@ function showMenu() {
 	subtitleBar1.innerHTML = "";
 	subtitleBar2.innerHTML = "";
 	subtitleContent = "";
-	scenario.text = (t) => { return "" };
+
 	inScenario = false;
+	inFreemode = false;
+
+	for (let b of bodies) {
+		b.clearBuffers();
+	}
 	bodies = [];
+
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	gl.clearColor(0, 0, 0, 1);
 }
