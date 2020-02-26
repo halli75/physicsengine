@@ -3,8 +3,6 @@ class SimultaneityScenario {
 		simulationType = 1;
 		scene = 1;
 
-		etherTime = -80;
-
 		transformation_method = PRESENT_HYPERSURFACE;
 		projectionType = ORTOGRAPHIC;
 		ortoFrustumSize = 5;
@@ -75,17 +73,20 @@ class SimultaneityScenario {
 		this.vel = (t) => {
 			if (scene == 1) {
 				return [vel, 0, 0];
-
 			}
 			return [0, 0, 0];
 		};
 
-		this.event = (t) => {
-			if (scene == 1 && t > 10) {
-				scene = 2;
-				etherTime = -30;
+		this.timeline = (t) => {
+			if (t < 90) {
+				scene = 1;
+				etherTime = t - 80; // -80 -> 10
 			}
-			else if (t > 20)
+			else if (t < 140) {
+				scene = 2;
+				etherTime = t - 120; // -30 -> 20
+			}
+			else
 				showMenu();
 		}
 
@@ -125,8 +126,6 @@ class TimeDilatationScenario {
 		transformation_method = PRESENT_HYPERSURFACE;
 		projectionType = ORTOGRAPHIC;
 		ortoFrustumSize = 12;
-
-		etherTime = -72;
 
 		sky_color = [0.73, 0.835, 1];
 
@@ -261,12 +260,16 @@ class TimeDilatationScenario {
 			return [0, -1, -0.01];
 		}
 
-		this.event = (t) => {
-			if (t > 15 && scene == 1) {
-				scene = 2;
-				etherTime = -90;
+		this.timeline = (t) => {
+			if (t < 87) {
+				scene = 1;
+				etherTime = t - 72; // -72 -> 15
 			}
-			else if (t > 125)
+			else if (t < 302) {
+				scene = 2;
+				etherTime = t - 177; // -90 -> 125
+			}
+			else
 				showMenu();
 		}
 
@@ -299,8 +302,6 @@ class LengthContractionScenario {
 	constructor() {
 		simulationType = 1;
 		scene = 1;
-
-		etherTime = -100;
 
 		sky_color = [0.73, 0.835, 1];
 
@@ -401,8 +402,10 @@ class LengthContractionScenario {
 				return [0, -6, -30];
 		}
 
-		this.event = (t) => {
-			if (t > 62)
+		this.timeline = (t) => {
+			if (t < 162)
+				etherTime = t - 100; // -100 -> 62
+			else
 				showMenu();
 		}
 
@@ -431,8 +434,6 @@ class TerrellRotationScenario {
 		transformation_method = PRESENT_HYPERSURFACE;
 		projectionType = PERSPECTIVE;
 		sky_color = [0, 0, 0];
-
-		etherTime = -65;
 
 		for (let x = -18; x < 25; x += 3) {
 			const c = new Cube([x, -1.35, 0], diceBlueTex, 1, 1, 1, 8, 8, 8);
@@ -476,6 +477,13 @@ class TerrellRotationScenario {
 			return [1, 0, 0.7];
 		}
 
+		this.timeline = (t) => {
+			if (t < 120)
+				etherTime = t - 65; // -65 -> 55
+			else
+				showMenu();
+		}
+
 		this.text = (t) => {
 			if (t < -50)
 				return "Terrell rotation or Terrell effect is the visual distortion that a passing object would appear to undergo, according to the special theory of relativity if it were travelling a significant fraction of the speed of light.";
@@ -497,9 +505,6 @@ class TerrellRotationScenario {
 				return "As distance to the cube becomes shorter, the vector projection of velocity of photons emited from back face to eye projected onto cube velocity becomes smaller. At some point, the cube outpaces light rays coming from the back face and thus we can see the back face of the cube."
 			return "";
 		};
-
-		this.event = (t) => {
-		};
 	}
 }
 
@@ -511,8 +516,6 @@ class LadderParadoxScenario {
 		transformation_method = PRESENT_HYPERSURFACE;
 		projectionType = ORTOGRAPHIC;
 		ortoFrustumSize = 6;
-
-		etherTime = -47;
 
 		sky_color = [0.73, 0.835, 1];
 
@@ -667,12 +670,16 @@ class LadderParadoxScenario {
 			return [0, -1, -8];
 		}
 
-		this.event = (t) => {
-			if (scene == 1 && t > 33) {
-				scene = 2;
-				etherTime = -65;
+		this.timeline = (t) => {
+			if (t < 78) {
+				scene = 1;
+				etherTime = t - 47; // -45 -> 33
 			}
-			else if (t > 55)
+			else if (t < 188) {
+				scene = 2;
+				etherTime = t - 143; // -65 -> 55
+			}
+			else
 				showMenu();
 		}
 
@@ -707,8 +714,6 @@ class TwinParadoxScenario {
 		scene = 1;
 		projectionType = ORTOGRAPHIC;
 		ortoFrustumSize = 15;
-
-		etherTime = -20;
 
 		transformation_method = PRESENT_HYPERSURFACE;
 		sky_color = [0, 0, 0];
@@ -903,14 +908,18 @@ class TwinParadoxScenario {
 			return "";
 		};
 
-		this.event = (t) => {
-			if (scene == 1 && t > 4 * ad + 2 * cd) {
-				scene = 2;
-				etherTime = -40;
+		this.timeline = (t) => {
+			if (t < 20 + 4 * ad + 2 * cd) {
+				scene = 1;
+				etherTime = t - 20; // -20 ->
 			}
-			else if (t > 105)
+			else if (t < 165 + 4 * ad + 2 * cd) {
+				scene = 2;
+				etherTime = t - 4 * ad - 2 * cd - 60; // -40 -> 105
+			}
+			else
 				showMenu();
-		};
+		}
 
 		diagram.pos = (t) => {
 			if (scene == 1) return [0, 0, 1000];

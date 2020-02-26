@@ -64,6 +64,7 @@ const gateBtn = document.createElement("BUTTON");
 gateBtn.innerHTML = "gate";
 gateBtn.onclick = function () {
 	inFreemode = true;
+	overlay.style.opacity = "1";
 	new Gate();
 	document.querySelector("#c").requestPointerLock();
 	etherTime = 0;
@@ -71,6 +72,11 @@ gateBtn.onclick = function () {
 	requestAnimationFrame(render);
 };
 container.appendChild(gateBtn);
+
+const pauseOverlay = document.getElementById("pause");
+pauseOverlay.style.opacity = "0";
+const overlay = document.getElementById("overlay");
+overlay.style.opacity = "0";
 
 const subtitleBar1 = document.getElementById("subtitleBar1");
 const subtitleBar2 = document.getElementById("subtitleBar2");
@@ -87,9 +93,6 @@ const v3 = twgl.v3;
 
 const canvas = document.getElementById("c");
 const gl = document.getElementById("c").getContext("webgl");
-
-const textCanvas = document.getElementById("text");
-const ctx = textCanvas.getContext("2d");
 
 const program = twgl.createProgramFromScripts(gl, ["vs", "fs"]);
 
@@ -182,34 +185,53 @@ window.onkeyup = function (e) { keys[e.keyCode] = false; }
 window.onkeydown = function (e) {
 	keys[e.keyCode] = true;
 
-	if (e.keyCode == 67) {//c
-		if (constantSpeed)
-			constantSpeed = false;
-		else
-			constantSpeed = true;
-	}
-	else if (e.keyCode == 69) {//e
-		let light = new Cube([], yellow, 0.1, 0.1, 0.1);
-
-		const vel = v3.add(camVel, v3.divScalar(camDir, g));
-		v3.add(vel, v3.mulScalar(camVel, v3.dot(camDir, camVel) * g / (1 + g)), vel);
-		v3.divScalar(vel, 1 + v3.dot(camDir, camVel), vel);
-
-		const pos = [...camPos];
-		const t0 = etherTime;
-
-		light.pos = (t) => {
-			return v3.add(pos, v3.mulScalar(vel, etherTime - t0));
+	if (inScenario) {
+		if (e.keyCode == 37) {//left
+			scenarioTime -= 5 * g;
+			if (scenarioTime < 0)
+				scenarioTime = 0;
 		}
-		light.vel = (t) => {
-			return vel;
-		};
+		else if (e.keyCode == 39) {//right
+			scenarioTime += 5 * g;
+		}
+		else if (e.keyCode == 32) {//space
+			if (paused) {
+				paused = false;
+				pauseOverlay.style.opacity = "0";
+			}
+			else {
+				paused = true;
+				pauseOverlay.style.opacity = "1";
+			}
+		}
+		else if (e.keyCode == 27) {//esc
+			showMenu();
+		}
 	}
-	else if (e.keyCode == 82) {//r
-		etherTime = 0;
-	}
-	else if (e.keyCode == 27) {//esc
-		showMenu();
+	else if (inFreemode) {
+		if (e.keyCode == 67) {//c
+			if (constantSpeed)
+				constantSpeed = false;
+			else
+				constantSpeed = true;
+		}
+		else if (e.keyCode == 69) {//e
+			let light = new Cube([], yellow, 0.1, 0.1, 0.1);
+
+			const vel = v3.add(camVel, v3.divScalar(camDir, g));
+			v3.add(vel, v3.mulScalar(camVel, v3.dot(camDir, camVel) * g / (1 + g)), vel);
+			v3.divScalar(vel, 1 + v3.dot(camDir, camVel), vel);
+
+			const pos = [...camPos];
+			const t0 = etherTime;
+
+			light.pos = (t) => {
+				return v3.add(pos, v3.mulScalar(vel, etherTime - t0));
+			}
+			light.vel = (t) => {
+				return vel;
+			};
+		}
 	}
 }
 
@@ -223,6 +245,9 @@ let camFront;
 let constantSpeed = false;
 
 let scenario = null;
+let scenarioTime;
+let paused;
+
 let inScenario = false;
 let inFreemode = false;
 

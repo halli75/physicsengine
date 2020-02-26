@@ -5,6 +5,10 @@ body {
 	background-color: black;
 }
 
+body::-webkit-scrollbar {
+	display: none;
+}
+
 canvas {
 	top:0;
     position: absolute;
@@ -56,12 +60,36 @@ button:hover {
 	text-align: justify;
 	background-color: rgba(0, 0, 0, 0.5);
   	color:white;
-  	font-size:32px;
+	font-size:32px;
 	user-select: none;
 }
 
 .subtitleBar:empty {
 	display: none;
+}
+
+#overlay {
+	top: 0;
+	left: 0;
+	position: absolute;
+	padding: 3px;
+  	color:white;
+	font-size:22px;
+	font-family: Arial, Helvetica, sans-serif;
+	text-shadow: -1px 0px black, 0 1px black, 1px 0 black, 0 -1px black;
+	user-select: none;
+}
+
+#pause {
+	top: 0;
+	left: 0;
+	position: absolute;
+	padding: 10px;
+  	color:white;
+	font-size:42px;
+	text-shadow: -1px 0px black, 0 1px black, 1px 0 black, 0 -1px black;
+	user-select: none;
+	opacity: 0;
 }
 
 

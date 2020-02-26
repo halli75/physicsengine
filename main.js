@@ -5,6 +5,14 @@ function render(time) {
 	if (dt > 0.1) dt = 0;
 
 	if (inScenario) {
+		scenario.timeline(scenarioTime);
+
+		if(!inScenario){
+			gl.clearColor(0, 0, 0, 1);
+			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+			return;
+		}
+
 		camPos = scenario.pos(etherTime);
 		camVisPos = scenario.visPos(etherTime);
 		camVel = scenario.vel(etherTime);
@@ -32,7 +40,6 @@ function render(time) {
 				MathJax.Hub.Queue(["Typeset", MathJax.Hub, subtitleBar1], f);
 			}
 		}
-		scenario.event(etherTime);
 	}
 	else if (inFreemode) {
 		if (pitch > Math.PI / 2)
@@ -78,12 +85,11 @@ function render(time) {
 
 
 	twgl.resizeCanvasToDisplaySize(gl.canvas);
-	twgl.resizeCanvasToDisplaySize(ctx.canvas);
 	gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
 	gl.enable(gl.DEPTH_TEST);
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	gl.clearColor(sky_color[0], sky_color[1], sky_color[2], 1);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 	let projection;
 	if (projectionType == PERSPECTIVE)
@@ -110,7 +116,13 @@ function render(time) {
 		n = v3.normalize(camVel);
 
 	const det = g * dt;
-	etherTime += det;
+
+	if(inScenario) {
+		if(!paused)
+			scenarioTime += det;
+	}
+	else 
+		etherTime += det;
 
 	var ds = v3.mulScalar(camVel, det);
 
@@ -135,22 +147,19 @@ function render(time) {
 
 	for (let b of bodies) b.show();
 
-	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	ctx.font = "14px Arial";
-	ctx.fillStyle = "white";
-	ctx.strokeStyle = "black";
-	ctx.lineWidth = 3;
-	ctx.textAlign = "left";
-
-	drawText("Position: " + camPos[0].toFixed(2) + "  " + camPos[1].toFixed(2) + "  " + camPos[2].toFixed(2), 10, 20);
-	drawText("Velocity: " + b.toFixed(5), 10, 40);
-	drawText("Time: " + etherTime.toFixed(2), 10, 60);
+	if(inFreemode) {
+		overlay.innerHTML = "Position: " + camPos[0].toFixed(2) + "  " + camPos[1].toFixed(2) + "  " + camPos[2].toFixed(2) + "</br>" + "Velocity: " + b.toFixed(5) + "</br>" + "Time: " + etherTime.toFixed(2);
+	}
 
 	if (constantSpeed)
-		drawText("Constant speed ", 10, 80);
+		overlay.innerHTML = overlay.innerHTML + "</br> Constant speed";
 
 	if (inScenario || inFreemode)
 		requestAnimationFrame(render);
+	else {
+		gl.clearColor(0, 0, 0, 1);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	}
 }
 
 function drawText(text, x, y) {
@@ -161,6 +170,10 @@ function drawText(text, x, y) {
 function hideMenu() {
 	container.style.display = "none";
 	subtitleContent = "";
+	scenarioTime = 0;
+
+	paused = false;
+	overlay.innerHTML = "";
 }
 
 function showMenu() {
@@ -169,6 +182,9 @@ function showMenu() {
 	subtitleBar2.innerHTML = "";
 	subtitleContent = "";
 
+	overlay.style.opacity = "0";
+	pauseOverlay.style.opacity = "0";
+
 	inScenario = false;
 	inFreemode = false;
 
@@ -176,9 +192,6 @@ function showMenu() {
 		b.clearBuffers();
 	}
 	bodies = [];
-
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	gl.clearColor(0, 0, 0, 1);
 }
 
 
