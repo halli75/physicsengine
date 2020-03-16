@@ -74,7 +74,7 @@ float angleBetween(vec3 a, vec3 b){
 
 void main() {
 	v_position = (rotation * a_position).xyz;
-
+  
 	if(simulationType != 0)
   	v_position -= n * (1.0-k) * dot(v_position, n);
   v_position += relPos;

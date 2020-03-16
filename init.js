@@ -61,7 +61,7 @@ twinParadoxBtn.onclick = function () {
 container.appendChild(twinParadoxBtn);
 
 const gateBtn = document.createElement("BUTTON");
-gateBtn.innerHTML = "gate";
+gateBtn.innerHTML = "Freemode";
 gateBtn.onclick = function () {
 	inFreemode = true;
 	overlay.style.opacity = "1";
@@ -92,7 +92,7 @@ const m4 = twgl.m4;
 const v3 = twgl.v3;
 
 const canvas = document.getElementById("c");
-const gl = document.getElementById("c").getContext("webgl");
+const gl = document.getElementById("c").getContext("webgl2");
 
 const program = twgl.createProgramFromScripts(gl, ["vs", "fs"]);
 
@@ -146,7 +146,7 @@ const planksTex = twgl.createTexture(gl, { src: 'assets/planks.jpg' });
 const woodTex = twgl.createTexture(gl, { src: 'assets/wood.jpg' });
 const barnTex = twgl.createTexture(gl, { src: 'assets/barn.jpg' });
 const brickTex = twgl.createTexture(gl, { src: 'assets/brick.jpg' });
-const clockTex = twgl.createTexture(gl, { src: 'assets/clock.jpg', flipY: 1 });
+const clockTex = twgl.createTexture(gl, { src: 'assets/clock.jpg', flipY: 1, minLod:1,maxLod:1 });
 const railTex = twgl.createTexture(gl, { src: 'assets/rail.png' });
 const trainRoofTex = twgl.createTexture(gl, { src: 'assets/trainroof.png' });
 const grassTex = twgl.createTexture(gl, { src: 'assets/grass.jpg' });
@@ -155,7 +155,19 @@ const mirrorTex = twgl.createTexture(gl, { src: 'assets/mirror.png' });
 const concreteTex = twgl.createTexture(gl, { src: 'assets/concrete.jpg' });
 const shinglesTex = twgl.createTexture(gl, { src: 'assets/shingles.jpg' });
 const roofing_metalTex = twgl.createTexture(gl, { src: 'assets/roofing_metal.jpg' });
-const twin_diagramTex = twgl.createTexture(gl, { src: 'assets/twinDiagram.png', flipY: 0 });
+const twin_diagramTex = twgl.createTexture(gl, { src: 'assets/twinDiagram.png', minLod:1,maxLod:1 });
+const controlsTex = twgl.createTexture(gl, { src: 'assets/controls.png', minLod:1,maxLod:1 });
+
+const gate_bronzeRoofTex = twgl.createTexture(gl, { src: 'assets/objects/gate/BronzeRoof1.jpg', flipY: 1 });
+const gate_bronzeStatuesTex = twgl.createTexture(gl, { src: 'assets/objects/gate/BronzeStatues1.jpg', flipY: 1 });
+const gate_columnsTex = twgl.createTexture(gl, { src: 'assets/objects/gate/Columns1.jpg', flipY: 1 });
+const gate_darkerWallTex = twgl.createTexture(gl, { src: 'assets/objects/gate/DarkerWall1.jpg', flipY: 1 });
+const gate_fregioTex = twgl.createTexture(gl, { src: 'assets/objects/gate/Fregio1.jpg', flipY: 1 });
+const gate_marblecColumnsTex = twgl.createTexture(gl, { src: 'assets/objects/gate/MarbleColumns2.jpg', flipY: 1 });
+const gate_sideGliphTex = twgl.createTexture(gl, { src: 'assets/objects/gate/SideGliph1.jpg', flipY: 1 });
+const gate_templeFrontTex = twgl.createTexture(gl, { src: 'assets/objects/gate/TempleFront1.jpg', flipY: 1 });
+const gate_wallTex = twgl.createTexture(gl, { src: 'assets/objects/gate/WhiteWall1.jpg', flipY: 1 });
+const gate_sideBuildingTex = twgl.createTexture(gl, { src: 'assets/objects/gate/WindowsBuilding1.jpg', flipY: 1});
 
 let pitch = 0;
 let yaw = 0;

@@ -936,27 +936,66 @@ class Gate {
 		projectionType = PERSPECTIVE;
 		sky_color = [0.73, 0.835, 1];
 
-		gateScenario();
+		camPos = [0, 2, 40];
+		camVel = [0, 0, 0];
+		pitch = 0;
+		yaw = -Math.PI / 2;
+
+		new Plane([0.5, 0, 0.5], check64Tex, 64, 64, 64, 64);
+
+		const controls = new Plane([0, -1.5, 32.5], controlsTex, 10.639, 3, 10, 3);
+		controls.rotation = (t) => {
+			return m4.rotationX(Math.PI / 2);
+		}
+
+		const s = 12;
+
+		const bronzeRoof = new Body([0, 0, 0], gate_bronzeRoofTex);
+		bronzeRoof.loadModel('assets/objects/gate/bronzeRoof.obj', s, s, s);
+		bronzeRoof.createBuffers();
+
+		const bronzeStatues = new Body([0, 0, 0], gate_bronzeStatuesTex);
+		bronzeStatues.loadModel('assets/objects/gate/bronzeStatues.obj', s, s, s);
+		bronzeStatues.createBuffers();
+
+		const bronzeStatuesNone = new Body([0, 0, 0], gate_bronzeStatuesTex);
+		bronzeStatuesNone.loadModel('assets/objects/gate/bronzeStatuesNone.obj', s, s, s);
+		bronzeStatuesNone.createBuffers();
+
+		const columns = new Body([0, 0, 0], gate_columnsTex);
+		columns.loadModel('assets/objects/gate/columns.obj', s, s, s);
+		columns.createBuffers();
+
+		const darkerWall = new Body([0, 0, 0], gate_darkerWallTex);
+		darkerWall.loadModel('assets/objects/gate/darkerWall.obj', s, s, s);
+		darkerWall.createBuffers();
+
+		const fregio = new Body([0, 0, 0], gate_fregioTex);
+		fregio.loadModel('assets/objects/gate/fregio.obj', s, s, s);
+		fregio.createBuffers();
+
+		const marble = new Body([0, 0, 0], gate_marblecColumnsTex);
+		marble.loadModel('assets/objects/gate/marble.obj', s, s, s);
+		marble.createBuffers();
+
+		const marbleColumns = new Body([0, 0, 0], gate_marblecColumnsTex);
+		marbleColumns.loadModel('assets/objects/gate/marbleColumns.obj', s, s, s);
+		marbleColumns.createBuffers();
+
+		const sideBuilding = new Body([0, 0, 0], gate_sideBuildingTex);
+		sideBuilding.loadModel('assets/objects/gate/sideBuilding.obj', s, s, s);
+		sideBuilding.createBuffers();
+
+		const sideGliph = new Body([0, 0, 0], gate_sideGliphTex);
+		sideGliph.loadModel('assets/objects/gate/sideGliph.obj', s, s, s);
+		sideGliph.createBuffers();
+
+		const templeFront = new Body([0, 0, 0], gate_templeFrontTex);
+		templeFront.loadModel('assets/objects/gate/templeFront.obj', s, s, s);
+		templeFront.createBuffers();
+
+		const wall = new Body([0, 0, 0], gate_wallTex);
+		wall.loadModel('assets/objects/gate/wall.obj', s, s, s);
+		wall.createBuffers();
 	}
-}
-
-function gateScenario(d = 1) {
-	camPos = [0, 2, -16];
-	yaw = 1.57;
-
-	new Plane([0.5, 0, 0.5], check32Tex, 32, 32, 32, 32);
-	new Cube([-2, 3, 0], sand, 1, 6, 3, 1, 6, 3);
-	new Cube([2, 3, 0], sand, 1, 6, 3, 1, 6, 3);
-
-	new Cube([-5, 3, 0], sand, 1, 6, 3, 1, 6, 3);
-	new Cube([5, 3, 0], sand, 1, 6, 3, 1, 6, 3);
-
-	new Cube([-8, 3, 0], sand, 1, 6, 3, 1, 6, 3);
-	new Cube([8, 3, 0], sand, 1, 6, 3, 1, 6, 3);
-
-	new Cube([0, 6.5, 0], sand, 17, 1, 3, 16, 1, 1);
-	new Cube([0, 7, 0], sand, 18, 0.5, 4, 18, 1, 1);
-	new Cube([0, 8, 0], sand, 17, 1.5, 2, 16, 1, 1);
-	new Cube([0, 8.1, 0], sand, 5, 1.7, 4, 3, 1, 1);
-	new Cube([0, 10, 0], cinder, 3, 2, 2, 3, 2, 1);
 }
