@@ -18,8 +18,10 @@ timeDilatationBtn.onclick = function () {
 	hideMenu();
 	requestAnimationFrame(render);
 };
+
 container.appendChild(timeDilatationBtn);
 
+/*
 const lengthContractionBtn = document.createElement("BUTTON");
 lengthContractionBtn.innerHTML = "Length contraction";
 lengthContractionBtn.onclick = function () {
@@ -71,8 +73,9 @@ gateBtn.onclick = function () {
 	hideMenu();
 	requestAnimationFrame(render);
 };
-container.appendChild(gateBtn);
 
+container.appendChild(gateBtn);
+*/
 const pauseOverlay = document.getElementById("pause");
 pauseOverlay.style.opacity = "0";
 const overlay = document.getElementById("overlay");
