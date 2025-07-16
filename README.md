@@ -5,6 +5,3 @@ Plain html educational website that explains special relativity with real-time a
 - Use left and right arrow keys to rewind scenarios
 - Pause with the spacebar
 - Close scenarios with the Esc key
-
-# Notes
-Textures sometimes are not loaded in time. Simply wait :)
